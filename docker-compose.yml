@@ -31,3 +31,12 @@ services:
             POSTGRES_PASSWORD: redmine
             POSTGRES_DATABASE: redmine
             TZ: Asia/Tokyo
+
+    nginx-proxy:
+        image: nginx:1.19
+        restart: always
+        volumes:
+            - ./nginx/conf.d:/etc/nginx/conf.d
+            - ./nginx/log:/var/log/nginx
+        ports:
+            - "80:80"

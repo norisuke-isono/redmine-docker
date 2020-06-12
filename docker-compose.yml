@@ -18,6 +18,19 @@ services:
             REDMINE_DB_PASSWORD: redmine
             TZ: Asia/Tokyo
 
+    gitolite:
+        image: jgiannuzzi/gitolite:latest
+        restart: always
+        ports:
+            - "2222:22"
+            - "8080:80"
+        volumes:
+            - ./gitolite/keys:/etc/ssh/keys
+            - ./gitolite/git:/var/lib/git
+        environment:
+            SSH_KEY: ${GITOLITE_SSH_KEY}
+            SSH_KEY_NAME: ${GITOLITE_SSH_KEY_NAME}
+
     postgres:
         image: postgres:12.3
         restart: always
@@ -35,10 +48,10 @@ services:
     nginx-proxy:
         image: nginx:1.19
         restart: always
+        ports:
+            - "80:80"
+            - "443:443"
         volumes:
             - ./nginx/conf.d:/etc/nginx/conf.d
             - ./nginx/log:/var/log/nginx
             - ./nginx/tls:/etc/nginx/tls
-        ports:
-            - "80:80"
-            - "443:443"

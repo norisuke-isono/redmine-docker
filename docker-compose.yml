@@ -7,10 +7,10 @@ services:
         expose:
             - "3000"
         volumes:
-            - ./redmine/files:/usr/src/redmine/files
-            - ./redmine/log:/usr/src/redmine/log
-            - ./redmine/plugins:/usr/src/redmine/plugins
-            - ./redmine/public/themes:/usr/src/redmine/public/themes
+            - ${MOUNT_PATH}/redmine/files:/usr/src/redmine/files
+            - ${MOUNT_PATH}/redmine/log:/usr/src/redmine/log
+            - ${MOUNT_PATH}/redmine/plugins:/usr/src/redmine/plugins
+            - ${MOUNT_PATH}/redmine/public/themes:/usr/src/redmine/public/themes
         environment:
             REDMINE_DB_POSTGRES: postgres
             REDMINE_DB_DATABASE: redmine
@@ -25,8 +25,8 @@ services:
             - "2222:22"
             - "8080:80"
         volumes:
-            - ./gitolite/keys:/etc/ssh/keys
-            - ./gitolite/git:/var/lib/git
+            - ${MOUNT_PATH}/gitolite/keys:/etc/ssh/keys
+            - ${MOUNT_PATH}/gitolite/git:/var/lib/git
         environment:
             SSH_KEY: ${GITOLITE_SSH_KEY}
             SSH_KEY_NAME: ${GITOLITE_SSH_KEY_NAME}
@@ -37,7 +37,7 @@ services:
         expose:
             - "5432"
         volumes:
-            - ./postgres/db-data:/var/lib/postgresql/data
+            - ${MOUNT_PATH}/postgres/db-data:/var/lib/postgresql/data
         environment:
             POSTGRES_ROOT_PASSWORD: postgres
             POSTGRES_USER: redmine
@@ -48,10 +48,10 @@ services:
     nginx-proxy:
         image: nginx:1.19
         restart: always
+        volumes:
+            - ${MOUNT_PATH}/nginx/conf.d:/etc/nginx/conf.d
+            - ${MOUNT_PATH}/nginx/log:/var/log/nginx
+            - ${MOUNT_PATH}/nginx/tls:/etc/nginx/tls
         ports:
             - "80:80"
             - "443:443"
-        volumes:
-            - ./nginx/conf.d:/etc/nginx/conf.d
-            - ./nginx/log:/var/log/nginx
-            - ./nginx/tls:/etc/nginx/tls
